@@ -1,9 +1,8 @@
 if (process.env.NODE_ENV != "production") {
   require('dotenv').config();
+  const dns = require('node:dns');
+  dns.setServers(['8.8.8.8', '8.8.4.4']);
 }
-
-const dns = require('node:dns');
-dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 const express = require("express");
 const app = express();
@@ -46,18 +45,20 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 
+const secret = process.env.SECRET || "mysupersecretcode";
+
 const store = MongoStore.create({
   mongoUrl: dbUrl,
-  crypto: { secret: process.env.SECRET },
+  crypto: { secret },
   touchAfter: 24 * 3600,
-})
+});
 store.on("error", (err) => {
   console.log("Error in MongoDb session store", err);
 });
 
 const sessionOptions = {
   store,
-  secret: process.env.SECRET,
+  secret,
   resave: false,
   saveUninitialized: true,
   cookie: {
@@ -65,7 +66,7 @@ const sessionOptions = {
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
   }
-}
+};
 
 app.use(session(sessionOptions))
 app.use(passport.initialize());
