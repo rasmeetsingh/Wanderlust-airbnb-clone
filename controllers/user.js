@@ -47,4 +47,8 @@ module.exports.signup = async (req, res, next) => {
     req.flash("success", "You are logged out ");
     res.redirect("/listings");
   });
-}
+};
+
+module.exports.renderHome = (req, res) => {
+  res.redirect("/listings");
+};

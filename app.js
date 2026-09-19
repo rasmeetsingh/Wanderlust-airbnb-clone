@@ -82,11 +82,11 @@ app.use((req, res, next) => {
   res.locals.error = req.flash("error");
   res.locals.currUser = req.user; 
   next();
-})
+});
 
-app.use("/listings", listingRouter)
-app.use("/listings/:id/reviews", reviewsRouter)
-app.use("/", userRouter)
+app.use("/listings", listingRouter);
+app.use("/listings/:id/reviews", reviewsRouter);
+app.use("/", userRouter);
 
 app.all(/(.*)/, (req, res, next) => {
   next(new ExpressError(404, `Page not Found: ${req.originalUrl}`));
@@ -98,6 +98,7 @@ app.use((err, req, res, next) => {
   res.status(statusCode).render("listings/error", { err });
 });
 
-app.listen(8080, () => {
-  console.log("server is  working at port 8080");
+const port = process.env.PORT || 8080;
+app.listen(port, () => {
+  console.log(`server is working at port ${port}`);
 });
